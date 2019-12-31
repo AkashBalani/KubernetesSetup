@@ -1,0 +1,14 @@
+# tasks file for create-master
+---
+- name: Create ec2 Instance
+  ec2:
+    key_name: "{{ key_name }}" # This is now the dynamically created key
+    instance_type: t2.micro
+    image: "{{ ami_id }}"  ##Need to add a Ubuntu or CentOS image
+    wait: yes
+    count: 1
+    vpc_subnet_id: "{{ vpc_subnet_id }}"  ##Could use default vpc or create a new vpc
+    assign_public_ip: yes
+    region: "{{ aws_region }}"
+    instance_tags:
+       Name: Master
