@@ -3,4 +3,5 @@
   connection: local
   gather_facts: True
   roles:
-  - create-master
+  #- create-master
+  - create-workers

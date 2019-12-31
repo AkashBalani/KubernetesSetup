@@ -1,6 +1,6 @@
 # tasks file for create-master
 ---
-- name: Create ec2 Instance
+- name: Create Master
   ec2:
     key_name: "{{ key_name }}" # This is now the dynamically created key
     instance_type: t2.micro
@@ -12,3 +12,9 @@
     region: "{{ aws_region }}"
     instance_tags:
        Name: Master
+
+- name: Gathering Facts About Elastic LoadBalancer
+  action:
+    module: ec2_elb_facts
+    region: us-east-1
+  register: elb_facts
