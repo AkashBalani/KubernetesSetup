@@ -1,20 +1,26 @@
 # tasks file for create-master
 ---
-- name: Create Master
-  ec2:
-    key_name: "{{ key_name }}" # This is now the dynamically created key
-    instance_type: t2.micro
-    image: "{{ ami_id }}"  ##Need to add a Ubuntu or CentOS image
-    wait: yes
-    count: 1
-    vpc_subnet_id: "{{ vpc_subnet_id }}"  ##Could use default vpc or create a new vpc
-    assign_public_ip: yes
-    region: "{{ aws_region }}"
-    instance_tags:
-       Name: Master
+# - name: Create Master
+#   ec2:
+#     key_name: "{{ key_name }}" # This is now the dynamically created key
+#     instance_type: t2.micro
+#     image: "{{ ami_id }}"  ##Need to add a Ubuntu or CentOS image
+#     wait: yes
+#     count: 1
+#     vpc_subnet_id: "{{ vpc_subnet_id }}"  ##Could use default vpc or create a new vpc
+#     assign_public_ip: yes
+#     region: "{{ aws_region }}"
+#     instance_tags:
+#        Name: Master
 
 - name: Fetching EC2 Facts
   ec2_instance_facts:
     region: "{{ aws_region }}"
     filters:
       "tag:Name": Master
+  register: master_facts
+
+- name: Add the newly created Instance to hosts file
+  add_host:
+    name: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
+    group: Master
