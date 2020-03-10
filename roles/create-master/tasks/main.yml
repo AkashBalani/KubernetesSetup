@@ -7,6 +7,7 @@
     image: "{{ ami_id }}"  ##Need to add a Ubuntu or CentOS image
     wait: yes
     count: 1
+    group: "Ubuntu-1"
     vpc_subnet_id: "{{ vpc_subnet_id }}"  ##Could use default vpc or create a new vpc
     assign_public_ip: yes
     region: "{{ aws_region }}"
@@ -24,9 +25,14 @@
   add_host:
     name: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
     group: Master
+    ansible_ssh_user: ubuntu
+    ansible_ssh_host: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
 
 - name: Wait for SSH to come up
+  become: yes
+  remote_user: ubuntu
   wait_for:
     host: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
     port: 22
     state: started
+  delegate_to: Master

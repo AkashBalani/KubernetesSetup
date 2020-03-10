@@ -3,6 +3,6 @@
   connection: local
   gather_facts: True
   roles:
-  - create-security-group
-  # - create-master
+  # - create-security-group
+  - create-master
   #- create-workers
