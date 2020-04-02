@@ -4,5 +4,6 @@
   gather_facts: True
   roles:
   # - create-security-group
-  - create-master
+  # - create-master
   #- create-workers
+  - create-s3
