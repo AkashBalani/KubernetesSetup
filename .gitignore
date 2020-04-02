@@ -1,2 +1,3 @@
 /group_vars/
 /akashcli.pem
+/ansible.cfg
