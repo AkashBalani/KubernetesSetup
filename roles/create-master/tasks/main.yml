@@ -61,3 +61,14 @@
     update_cache: yes
   delegate_to: "{{ ec2['instances'][0]['public_ip'] }}"
 
+- name: Install Curl And Wget # Added curl and wget so that we can curl microsoft gpg key
+  become: yes
+  remote_user: ubuntu
+  apt:
+    name:
+      - curl
+      - wget
+    state: present
+    update_cache: yes
+  delegate_to: "{{ ec2['instances'][0]['public_ip'] }}"
+
