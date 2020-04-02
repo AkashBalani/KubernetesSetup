@@ -32,19 +32,32 @@
 
 - name: Add the newly created Instance to hosts file
   add_host:
-    name: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
+    name: "{{ ec2['instances'][0]['public_ip'] }}"
     group: Master
     ansible_ssh_user: ubuntu
-    ansible_ssh_host: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
+    ansible_ssh_host: "{{ ec2['instances'][0]['public_ip'] }}"
     ansible_ssh_private_key_file: "{{ ssh_public_key }}"
+  with_items: "{{ ec2.instances }}"
+
+- name: accept new ssh fingerprints                                         
+  shell: ssh-keyscan -H {{ ec2['instances'][0]['public_ip'] }} >> ~/.ssh/known_hosts          
   with_items: "{{ ec2.instances }}"
 
 - name: Wait for SSH to come up
   # become: yes
   # remote_user: ubuntu
   wait_for:
-    host: "{{ master_facts.instances | selectattr('public_dns_name', 'contains' ,'ec2') | map(attribute='public_dns_name') | first }}"
+    host: "{{ ec2['instances'][0]['public_ip'] }}"
     port: 22
     state: started
   with_items: "{{ ec2.instances }}"
+
+- name: Upgrade all packages to the latest version # This module works now, need to find a way to automate the authenticity checking
+  become: yes
+  remote_user: ubuntu
+  apt:
+    name: "*"
+    state: latest
+    update_cache: yes
+  delegate_to: "{{ ec2['instances'][0]['public_ip'] }}"
 
