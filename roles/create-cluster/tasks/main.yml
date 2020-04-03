@@ -16,3 +16,10 @@
 
 - name: Kops Update
   shell: "kops update cluster --state {{ state_store }} --yes --name=csye7220.k8s.local"
+
+- name: Verify that all Kubernetes nodes are ready  ## Need to verify this module
+  shell: "kops validate cluster --name {{ cluster_name }} --state {{ state_store }}"
+  register: cmd_result
+  until: cmd_result.stdout.find('Your cluster ' + cluster_name + ' is ready') != -1
+  retries: 20
+  delay: 60

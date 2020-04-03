@@ -9,3 +9,5 @@
   - create-s3
   - create-cluster
 
+  # Need to add roles for deleting these things
+
