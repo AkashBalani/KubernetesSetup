@@ -5,5 +5,7 @@
   roles:
   # - create-security-group
   # - create-master
-  #- create-workers
+  # - create-workers
   - create-s3
+  - create-cluster
+

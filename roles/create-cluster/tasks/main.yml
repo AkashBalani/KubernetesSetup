@@ -1,0 +1,18 @@
+---
+# tasks file for create-cluster
+- name: Gathering Zones
+  aws_az_facts:
+    aws_access_key: "{{ lookup('env', 'AWS_ACCESS_KEY_ID') }}"
+    aws_secret_key: "{{ lookup('env', 'AWS_SECRET_ACCESS_KEY') }}"
+    region: us-east-1
+  register: zones1
+
+- name: Setting Facts
+  set_fact:
+    zones: "{{ zones1.availability_zones | map(attribute='zone_name') | join(',') }}"
+
+- name: Kops install shell
+  shell: "kops create cluster --node-count=2 --node-size=t2.medium --zones=us-east-1a --name=csye7220.k8s.local --state {{ state_store }}"
+
+- name: Kops Update
+  shell: "kops update cluster --state {{ state_store }} --yes --name=csye7220.k8s.local"
