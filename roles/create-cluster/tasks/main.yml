@@ -12,13 +12,13 @@
     zones: "{{ zones1.availability_zones | map(attribute='zone_name') | join(',') }}"
 
 - name: Kops install shell
-  shell: "kops create cluster --node-count=2 --node-size=t2.medium --zones=us-east-1a --name=csye7220.k8s.local --state {{ state_store }}"
+  shell: "kops create cluster --node-count=2 --node-size=t2.medium --zones=us-east-1a --name=csye7220.k8s.local --state s3://{{ s3Name }}"
 
 - name: Kops Update
-  shell: "kops update cluster --state {{ state_store }} --yes --name=csye7220.k8s.local"
+  shell: "kops update cluster --state s3://{{ s3Name }} --yes --name=csye7220.k8s.local"
 
 - name: Verify that all Kubernetes nodes are ready  ## Need to verify this module
-  shell: "kops validate cluster --name {{ cluster_name }} --state {{ state_store }}"
+  shell: "kops validate cluster --name {{ cluster_name }} --state s3://{{ s3Name }}"
   register: cmd_result
   until: cmd_result.stdout.find('Your cluster ' + cluster_name + ' is ready') != -1
   retries: 20

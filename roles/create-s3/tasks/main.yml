@@ -12,5 +12,9 @@
     aws_secret_key: "{{ lookup('env','aws_secret_key') }}"
   register: s3_url
 
+- name: Set s3 name as fact
+  set_fact: 
+    s3Name: "{{ s3_url['name'] }}"
+
 - name: Display s3 url
   debug: var=s3_url
