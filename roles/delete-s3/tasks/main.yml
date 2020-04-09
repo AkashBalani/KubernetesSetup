@@ -1,0 +1,7 @@
+---
+# tasks file for delete-s3
+- name: Delete state store
+  s3_bucket:
+    name: {{ s3Name }}
+    state: absent
+    force: yes

@@ -1,0 +1,4 @@
+---
+# tasks file for delete-cluster
+- name: Delete cluster
+  shell: kops delete cluster --name {{ cluster_name }} --state s3://{{ s3Name }}
